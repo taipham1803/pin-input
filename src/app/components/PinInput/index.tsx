@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { PinInputProps } from './types';
 import { parsePinInput } from "@/app/utils/input";
 
@@ -19,10 +19,16 @@ const PinInput = ({
     inputRefs.current[0]?.focus(); // autofocus on first box
   }, []);
 
-  const onBoxFocus = () => {
+  const onBoxFocus = useCallback(() => {
     const curIndex = value.length;
-    inputRefs.current[curIndex].focus()
-  }
+    if (curIndex < inputRefs.current.length) {
+      inputRefs?.current[curIndex]?.focus();
+    }
+  }, [value.length])
+
+  useEffect(() => {
+    onBoxFocus()
+  }, [length, onBoxFocus, secretMode]);
 
   const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
     const clipboardData = event.clipboardData.getData('text');

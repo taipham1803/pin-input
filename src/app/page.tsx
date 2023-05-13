@@ -83,7 +83,13 @@ export default function Home() {
                   </p>
                 </button>
                 <button
-                  onClick={() => setPinLength(pre => pre > 1 ? pre - 1 : 0)}
+                  onClick={() => {
+                    if (pinLength > 3) {
+                      setPinLength(pre => pre - 1)
+                    } else {
+                      alert('Min pin length is 3');
+                    }
+                  }}
                   className='w-6 h-6 flex items-center justify-center bg-gray-200' >
                   <p className='text-black' >
                     {'-'}
