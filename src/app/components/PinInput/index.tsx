@@ -20,7 +20,6 @@ const PinInput = ({
 
   const onBoxFocus = () => {
     const curIndex = value.length;
-    console.log('onBoxFocus curIndex = ' + curIndex)
     inputRefs.current[curIndex].focus()
   }
 
@@ -47,16 +46,10 @@ const PinInput = ({
         prevInput.focus();
         currInput.value = prevValue;
         const newValue = value.slice(0, inputIndex - 1) + value.slice(inputIndex, value.length - 1)
-        console.log('value.slice(0, inputIndex - 1): ', value.slice(0, inputIndex - 1))
-        console.log('prevValue: ', prevValue)
-        console.log('value.slice(inputIndex, value.length - 1): ', value.slice(inputIndex, value.length - 1))
-        console.log('handleInputKeyDown newValue: ', newValue)
         setValue(newValue);
       }
     } else if (event.key.match(new RegExp(regex))) {
-      console.log('event.key: ', event.key)
       const newValue = value.slice(0, inputIndex) + event.key + value.slice(inputIndex + 1);
-      console.log('newValue: ', newValue)
       setValue(newValue);
       if (inputIndex < length - 1 && event.key !== "") {
         inputRefs.current[inputIndex + 1].focus();
@@ -64,7 +57,6 @@ const PinInput = ({
       if (onChange) {
         onChange(newValue);
       }
-  
       if (newValue.length === length && onComplete) {
         onComplete(newValue);
       }
@@ -72,14 +64,14 @@ const PinInput = ({
   };
 
   return (
-    <div className="flex flex-col p-20 bg-white" onClick={onBoxFocus}>
-      <div className="flex flex-row space-x-4" >
+    <div className="flex flex-col p-4 sm:p-20 bg-white" onClick={onBoxFocus}>
+      <div className="flex flex-row space-x-2 sm:space-x-4" >
         {Array.from({ length }).map((_, i) => {
           return (
-            <div key={i} className="flex w-20 h-20 bg-white">
+            <div key={i} className="flex bg-white">
               <input
                 onPaste={handlePaste}
-                className="w-20 h-20 text-black text-center border border-black"
+                className="w-12 h-12 sm:w-20 sm:h-20 text-black text-center border border-black"
                 type={secretMode ? "password" : "text"}
                 maxLength={1}
                 value={value[i] ?? ""}
