@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 interface PinInputProps {
   length?: number; // allows changing the number of input boxes
   secretMode?: boolean; // allows turning on/off secret mode
-  regex?: RegExp; // allows passing a regex for box input validation
+  regex?: string; // allows passing a regex for box input validation
   defaultValue?: string; // allows setting a default value
   onChange?: (value: string) => void; // invokes a method after each box is filled
   onComplete?: (value: string) => void; // invokes a method after all boxes are filled
@@ -14,7 +14,7 @@ interface PinInputProps {
 const PinInput = ({
   length = 5,
   secretMode = false,
-  regex = /^\d$/,
+  regex = '^[0-9]*$',
   defaultValue = "",
   onChange,
   onComplete,
@@ -34,15 +34,23 @@ const PinInput = ({
     const inputValue = event.target.value;
     const inputIndex = inputRefs.current.indexOf(event.target);
 
-    if (!regex.test(inputValue)) {
+    console.log('inputValue: ' + inputValue)
+
+    if (!inputValue.match(new RegExp(regex))) {
+      console.log('Not match regex!')
       return;
     }
 
     const newValue = value.slice(0, inputIndex) + inputValue + value.slice(inputIndex + 1);
+    console.log('value.slice(0, inputIndex): ' + value.slice(0, inputIndex))
+    console.log('inputValue: ' + inputValue)
+    console.log('value.slice(inputIndex + 1): ' + value.slice(inputIndex + 1))
+    console.log('handleInputChange newValue: ' + newValue)
+
     setValue(newValue);
 
     if (inputIndex < length - 1 && inputValue !== "") {
-      inputRefs.current[inputIndex + 1].focus(); // move focus to next box
+      inputRefs.current[inputIndex + 1].focus();
     }
 
     if (onChange) {
@@ -54,9 +62,11 @@ const PinInput = ({
     }
   };
 
-
   const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+
     const inputIndex = inputRefs.current.indexOf(event.target as HTMLInputElement);
+
+    // console.log('handleInputKeyDown inputIndex = ', inputIndex)
 
     if (event.key === "Backspace" && inputIndex > 0) {
       event.preventDefault();
@@ -70,20 +80,21 @@ const PinInput = ({
         prevInput.value = "";
         prevInput.focus();
         currInput.value = prevValue;
-        setValue(
-          value.slice(0, inputIndex - 1) + prevValue + value.slice(inputIndex, value.length - 1)
-        );
+        const newValue = value.slice(0, inputIndex - 1) + prevValue + value.slice(inputIndex, value.length - 1)
+        // console.log('handleInputKeyDown newValue: ', newValue)
+        setValue(newValue);
       }
+    } else {
+      // setValue(event.currentTarget.value)
     }
   };
 
-  const handleInputClick = (event: React.MouseEvent<HTMLInputElement>) => {
-    const inputIndex = inputRefs.current.indexOf(event.target as HTMLInputElement);
-    inputRefs.current[inputIndex].focus();
-  };
+  const onBoxFocus = () => {
+    inputRefs.current[value.length].focus()
+  }
 
   return (
-    <div className="flex flex-col p-20 bg-white" >
+    <div className="flex flex-col p-20 bg-white" onClick={onBoxFocus}>
       <div className="flex flex-row space-x-4" >
       {Array.from({ length }).map((_, i) => {
         const boxValue = value[i] ?? "";
@@ -96,7 +107,7 @@ const PinInput = ({
               value={boxValue}
               onChange={handleInputChange}
               onKeyDown={handleInputKeyDown}
-              onClick={handleInputClick}
+              onClick={onBoxFocus}
               ref={(input) => {
                 inputRefs.current[i] = input as HTMLInputElement;
               }}
