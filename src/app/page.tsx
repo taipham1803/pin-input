@@ -5,12 +5,13 @@ import PinInput from './components/PinInput'
 
 export default function Home() {
   const handlePinChange = (value: string) => {
-    // console.log(`Pin value changed: ${value}`);
+    console.log(`Pin value changed: ${value}`);
   };
   
   const handlePinComplete = (value: string) => {
     // after all the boxes are filled
-    // console.log(`Pin value complete: ${value}`);
+    alert(`The input are filled with value ${value}`)
+    console.log(`Pin value complete: ${value}`);
   };
 
   return (
