@@ -1,13 +1,19 @@
 "use client"
 
+import React from 'react';
+import { Switch } from '@headlessui/react'
 import Image from 'next/image'
 import PinInput from './components/PinInput'
+import { parsePinInput } from './utils/input';
 
 export default function Home() {
+  const [secretModeEnabled, setSecretModeEnabled] = React.useState(false)
+  const [pinLength, setPinLength] = React.useState(5);
+
   const handlePinChange = (value: string) => {
     console.log(`Pin value changed: ${value}`);
   };
-  
+
   const handlePinComplete = (value: string) => {
     // after all the boxes are filled
     alert(`The input are filled with value ${value}`)
@@ -42,7 +48,57 @@ export default function Home() {
       </div>
 
       <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-      <PinInput length={5} onChange={handlePinChange} onComplete={handlePinComplete} />
+        <div className='flex flex-col bg-white p-8' >
+          <div className='flex flex-col self-center space-y-4 items-center' >
+            <p className='text-black text-center'>
+              {'PinInput props:'}
+            </p>
+            <div className='flex flex-row items-center space-x-4' >
+              <p className='text-black' >
+                {'Secret Mode'}
+              </p>
+              <Switch
+                checked={secretModeEnabled}
+                onChange={setSecretModeEnabled}
+                className={`${secretModeEnabled ? 'bg-blue-600' : 'bg-gray-200'
+                  } relative inline-flex h-6 w-11 items-center rounded-full`}
+              >
+                <span className="sr-only">Enable secretMode</span>
+                <span
+                  className={`${secretModeEnabled ? 'translate-x-6' : 'translate-x-1'
+                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                />
+              </Switch>
+            </div>
+            <div className='flex flex-row items-center space-x-4' >
+              <p className='text-black' >
+                {`Input length: ${pinLength}`}
+              </p>
+              <div className="flex flex-row space-x-2" >
+                <button
+                  onClick={() => setPinLength(pre => pre + 1)}
+                  className='w-6 h-6 flex items-center justify-center bg-green-200' >
+                  <p className='text-black' >
+                    {'+'}
+                  </p>
+                </button>
+                <button
+                  onClick={() => setPinLength(pre => pre > 1 ? pre - 1 : 0)}
+                  className='w-6 h-6 flex items-center justify-center bg-gray-200' >
+                  <p className='text-black' >
+                    {'-'}
+                  </p>
+                </button>
+              </div>
+            </div>
+          </div>
+          <PinInput
+            secretMode={secretModeEnabled}
+            length={pinLength}
+            onChange={handlePinChange}
+            onComplete={handlePinComplete}
+          />
+        </div>
       </div>
 
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
