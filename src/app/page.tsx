@@ -9,6 +9,7 @@ export default function Home() {
   };
   
   const handlePinComplete = (value: string) => {
+    // after all the boxes are filled
     console.log(`Pin value complete: ${value}`);
   };
 

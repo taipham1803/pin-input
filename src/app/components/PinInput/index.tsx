@@ -54,19 +54,49 @@ const PinInput = ({
     }
   };
 
+
+  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const inputIndex = inputRefs.current.indexOf(event.target as HTMLInputElement);
+
+    if (event.key === "Backspace" && inputIndex > 0) {
+      event.preventDefault();
+      const prevInput = inputRefs.current[inputIndex - 1];
+
+      if (!prevInput.value) {
+        prevInput.focus();
+      } else {
+        const currInput = inputRefs.current[inputIndex];
+        const prevValue = prevInput.value;
+        prevInput.value = "";
+        prevInput.focus();
+        currInput.value = prevValue;
+        setValue(
+          value.slice(0, inputIndex - 1) + prevValue + value.slice(inputIndex, value.length - 1)
+        );
+      }
+    }
+  };
+
+  const handleInputClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    const inputIndex = inputRefs.current.indexOf(event.target as HTMLInputElement);
+    inputRefs.current[inputIndex].focus();
+  };
+
   return (
-    <div className="flex flex-row" >
+    <div className="flex flex-col p-20 bg-white" >
+      <div className="flex flex-row space-x-4" >
       {Array.from({ length }).map((_, i) => {
         const boxValue = value[i] ?? "";
-        console.log('boxValue: ', boxValue)
         return (
           <div key={i} className="flex w-20 h-20 bg-white">
             <input
-              className="flex-1 w-20 h-20 text-black text-center"
+              className="w-20 h-20 text-black text-center border border-black"
               type={secretMode ? "password" : "text"}
               maxLength={1}
               value={boxValue}
               onChange={handleInputChange}
+              onKeyDown={handleInputKeyDown}
+              onClick={handleInputClick}
               ref={(input) => {
                 inputRefs.current[i] = input as HTMLInputElement;
               }}
@@ -74,6 +104,7 @@ const PinInput = ({
           </div>
         )
       })}
+    </div>
     </div>
   );
 };
