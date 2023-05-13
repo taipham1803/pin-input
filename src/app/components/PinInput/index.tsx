@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { PinInputProps } from './types';
+import { parsePinInput } from "@/app/utils/input";
 
 const PinInput = ({
   length = 5,
@@ -48,7 +49,7 @@ const PinInput = ({
         const newValue = value.slice(0, inputIndex - 1) + value.slice(inputIndex, value.length - 1)
         setValue(newValue);
       }
-    } else if (event.key.match(new RegExp(regex))) {
+    } else if (parsePinInput(event.key, regex)) {
       const newValue = value.slice(0, inputIndex) + event.key + value.slice(inputIndex + 1);
       setValue(newValue);
       if (inputIndex < length - 1 && event.key !== "") {
